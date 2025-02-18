@@ -1,3 +1,7 @@
+function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
 (async function () {
     dados = Array(0);
 
@@ -129,6 +133,15 @@ async function carrega_info_cargas(id_linha){
                     '</div>'+
                   '</div>'+
                 '</div>');
+
+            $("#botoes_acao_tabela").html('');
+            $("#botoes_acao_tabela").html('<a class="btn-action"><!-- Download SVG icon from http://tabler-icons.io/i/refresh -->'+
+                          '<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>'+
+                        '</a>'+
+                        '<button onClick="exclui_carga('+dados[i].id+')" class="btn-action"><!-- Download SVG icon from http://tabler-icons.io/i/refresh -->'+
+                          '<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-database-x"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6c0 1.657 3.582 3 8 3s8 -1.343 8 -3s-3.582 -3 -8 -3s-8 1.343 -8 3" /><path d="M4 6v6c0 1.657 3.582 3 8 3c.537 0 1.062 -.02 1.57 -.058" /><path d="M20 13.5v-7.5" /><path d="M4 12v6c0 1.657 3.582 3 8 3c.384 0 .762 -.01 1.132 -.03" /><path d="M22 22l-5 -5" /><path d="M17 22l5 -5" /></svg>'+
+                        '</button>');
+
         }
     }
 
@@ -210,3 +223,37 @@ $("#salvar_informações").click(async function(){
     await carrega_cargas(email);
 
 });
+
+
+async function exclui_carga(id_linha){
+
+    var url = 'https://prod-22.westus.logic.azure.com:443/workflows/3643c1c102744a728fa718ff38140b50/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SP051J8clZbz17k2qKJaMQFqu7eKw7uQFK-jzh8rrwc';
+
+    var insert_data = {
+        solicitacao: "deleta_linha_tabela",
+        tabela: "ponderacao_cargas",
+        key: ""+id_linha+"",
+        email : email,
+        x_api_key: "1348f1ed93616d59f6d62eb7631ae137cc902fc9cc4bb22428a384c1cec91c20"
+    };
+    
+    await fetch(url,{
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(insert_data)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('exclusão realizada com sucesso');
+        })
+        .catch(error => {
+            console.log('problema na conexão com a api');
+        })
+
+    await sleep(2000);
+    await $("#dados_cargas").html('');
+    await carrega_cargas(email);
+
+}

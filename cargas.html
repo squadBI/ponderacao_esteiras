@@ -72,12 +72,7 @@
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <a href="#" class="dropdown-item">Status</a>
-                <a href="./profile.html" class="dropdown-item">Profile</a>
-                <a href="#" class="dropdown-item">Feedback</a>
-                <div class="dropdown-divider"></div>
-                <a href="./settings.html" class="dropdown-item">Settings</a>
-                <a href="./sign-in.html" class="dropdown-item">Logout</a>
+                <a id="logout" class="dropdown-item">Logout</a>
               </div>
             </div>
           </div>
@@ -239,6 +234,12 @@
               </div>
               <div class="col-lg-8">
                 <div class="card">
+                  <div class="card-header">
+                      <h3 class="card-title">Informações da tabela</h3>
+                      <div id="botoes_acao_tabela" class="card-actions btn-actions">
+
+                      </div>
+                    </div>
                   <div class="card-body">
                     <div id="info_cargas"></div>
                     <div id="editor"></div>
@@ -375,6 +376,7 @@
     <script src="./dist/js/tabler.min.js?1684106062" defer></script>
     <script src="./dist/js/demo.min.js?1684106062" defer></script>
     <script src="./dist/js/cargas.js"></script>
+    <script src="./dist/js/verifica-login.js"></script>
     <script type="text/javascript">
         const editor = CodeMirror(document.getElementById("editor"), {
         mode: "sql",
