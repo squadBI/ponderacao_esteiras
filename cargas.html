@@ -325,18 +325,18 @@
             <div class="row">
               <div id="exibe_url_s3" class="col-lg-8" style="display: none;">
                 <div class="mb-3">
-                  <label class="form-label">Report url</label>
+                  <label class="form-label">URL do arquivo</label>
                   <div class="input-group input-group-flat">
                     <input id="url_s3" type="text" class="form-control ps-0" autocomplete="off" placeholder="gaio/Vendas_concessao/EXEMPLO.csv">
                   </div>
                 </div>
               </div>
-              <div id="exibe_conexao_banco" class="col-lg-4" style="display: none;">
+              <div id="exibe_conexao_banco" class="col-lg-4">
                 <div class="mb-3">
                   <label class="form-label">Conexão</label>
                   <select id="conexao_banco" class="form-select">
                     <option value="DWPRD" selected>DWPRD</option>
-                    <option value="LAKE">LAKE</option>
+                    <option value="LAKEPRD">LAKE</option>
                   </select>
                 </div>
               </div>
@@ -346,7 +346,7 @@
                   <textarea id="descricao_info" class="form-control" rows="3"></textarea>
                 </div>
               </div>
-              <div id="exibe_campo_consulta" class="col-lg-12" style="display: none;">
+              <div id="exibe_campo_consulta" class="col-lg-12">
                 <div>
                   <label class="form-label">Consulta completa</label>
                   <textarea id="consulta_sql" class="form-control" rows="3"></textarea>
@@ -363,6 +363,116 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
               Salvar inofrmações
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal modal-blur fade" id="modal-update" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Nome tabela</label>
+              <input type="text" class="form-control" id="nome_tabela_update" placeholder="exemplo_minusculo_separado_por_underline">
+            </div>
+            <label class="form-label">Tipo da conexão</label>
+            <div class="form-selectgroup-boxes row mb-3">
+              <div class="col-lg-6">
+                <label class="form-selectgroup-item">
+                  <input type="radio" id="report-type-update" name="report-type-update" value="SQL" onchange="seleciona_tipo_conexao_update('SQL')" class="form-selectgroup-input" checked>
+                  <span class="form-selectgroup-label d-flex align-items-center p-3">
+                    <span class="me-3">
+                      <span class="form-selectgroup-check"></span>
+                    </span>
+                    <span class="form-selectgroup-label-content">
+                      <span class="form-selectgroup-title strong mb-1">SQL</span>
+                      <span class="d-block text-muted">Consulta que gera a tabela a partir da conexão escolhida</span>
+                    </span>
+                  </span>
+                </label>
+              </div>
+              <div class="col-lg-6">
+                <label class="form-selectgroup-item">
+                  <input type="radio" id="report-type-update" name="report-type-update" value="S3" onchange="seleciona_tipo_conexao_update('S3')" class="form-selectgroup-input">
+                  <span class="form-selectgroup-label d-flex align-items-center p-3">
+                    <span class="me-3">
+                      <span class="form-selectgroup-check"></span>
+                    </span>
+                    <span class="form-selectgroup-label-content">
+                      <span class="form-selectgroup-title strong mb-1">S3</span>
+                      <span class="d-block text-muted">Arquivo aramzenado no S3 que será a tabela base</span>
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div id="exibe_url_s3_update" class="col-lg-8" style="display: none;">
+                <div class="mb-3">
+                  <label class="form-label">URL do arquivo</label>
+                  <div class="input-group input-group-flat">
+                    <input id="url_s3_update" type="text" class="form-control ps-0" autocomplete="off" placeholder="gaio/Vendas_concessao/EXEMPLO.csv">
+                  </div>
+                </div>
+              </div>
+              <div id="exibe_conexao_banco_update" class="col-lg-4">
+                <div class="mb-3">
+                  <label class="form-label">Conexão</label>
+                  <select id="conexao_banco_update" class="form-select">
+                    <option value="DWPRD" selected>DWPRD</option>
+                    <option value="LAKEPRD">LAKE</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-lg-12 mb-3">
+                <div>
+                  <label class="form-label">Descrição</label>
+                  <textarea id="descricao_info_update" class="form-control" rows="3"></textarea>
+                </div>
+              </div>
+              <div id="exibe_campo_consulta_update" class="col-lg-12">
+                <div>
+                  <label class="form-label">Consulta completa</label>
+                  <textarea id="consulta_sql_update" class="form-control" rows="3"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+              Cancelar
+            </a>
+            <button id="atualizar_informações" class="btn btn-primary ms-auto" data-bs-dismiss="modal">
+              <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+              Atualizar inofrmações
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal modal-blur fade" id="modal-confirma-delete" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="modal-status bg-danger"></div>
+          <div class="modal-body text-center py-4">
+            <!-- Download SVG icon from http://tabler-icons.io/i/alert-triangle -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+            <h3>Deseja mesmo excluir?</h3>
+            <div class="text-muted">Se tiver certeza é só confirmar? Não terá como desfazer!</div>
+          </div>
+          <div class="modal-footer">
+            <div class="w-100">
+              <div class="row">
+                <div class="col"><a href="#" class="btn w-100" data-bs-dismiss="modal">
+                    Cancel
+                  </a></div>
+                <div id="confirma_exclusao" class="col"><a class="btn btn-danger w-100" data-bs-dismiss="modal">
+                    Deletar item
+                  </a></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
