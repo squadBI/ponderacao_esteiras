@@ -215,7 +215,7 @@
                           </div>
                           <div class="col">
                             <div class="font-weight-medium">
-                              132 Calculados
+                              132 Consultas
                             </div>
                             <div class="text-muted">
                               21 today
@@ -293,7 +293,7 @@
             </div>
             <label class="form-label">Tipo da conexão</label>
             <div class="form-selectgroup-boxes row mb-3">
-              <div class="col-lg-6">
+              <div class="col-lg-4">
                 <label class="form-selectgroup-item">
                   <input type="radio" id="report-type" name="report-type" value="SQL" onchange="seleciona_tipo_conexao('SQL')" class="form-selectgroup-input" checked>
                   <span class="form-selectgroup-label d-flex align-items-center p-3">
@@ -307,7 +307,7 @@
                   </span>
                 </label>
               </div>
-              <div class="col-lg-6">
+              <div class="col-lg-4">
                 <label class="form-selectgroup-item">
                   <input type="radio" id="report-type" name="report-type" value="S3" onchange="seleciona_tipo_conexao('S3')" class="form-selectgroup-input">
                   <span class="form-selectgroup-label d-flex align-items-center p-3">
@@ -317,6 +317,20 @@
                     <span class="form-selectgroup-label-content">
                       <span class="form-selectgroup-title strong mb-1">S3</span>
                       <span class="d-block text-muted">Arquivo aramzenado no S3 que será a tabela base</span>
+                    </span>
+                  </span>
+                </label>
+              </div>
+              <div class="col-lg-4">
+                <label class="form-selectgroup-item">
+                  <input type="radio" id="report-type" name="report-type" value="CONSULTA" onchange="seleciona_tipo_conexao('CONSULTA')" class="form-selectgroup-input">
+                  <span class="form-selectgroup-label d-flex align-items-center p-3">
+                    <span class="me-3">
+                      <span class="form-selectgroup-check"></span>
+                    </span>
+                    <span class="form-selectgroup-label-content">
+                      <span class="form-selectgroup-title strong mb-1">CONSULTA</span>
+                      <span class="d-block text-muted">Consulta que gera uma tabela a partir de outra já criada</span>
                     </span>
                   </span>
                 </label>
@@ -339,6 +353,9 @@
                     <option value="LAKEPRD">LAKE</option>
                   </select>
                 </div>
+              </div>
+              <div id="exibe_fonte_existente" class="col-lg-4" style="display: none;">
+                
               </div>
               <div class="col-lg-12 mb-3">
                 <div>
