@@ -159,14 +159,35 @@ async function carrega_info_cargas(id_linha){
 }
 
 async function seleciona_tipo_conexao(tipo_conexao){
+    $("#report-type").val(tipo_conexao);
     if(tipo_conexao=='SQL'){
         $("#exibe_url_s3").hide();
         $("#exibe_campo_consulta").show();
         $("#exibe_conexao_banco").show();
-    } else {
+        $("#exibe_fonte_existente").hide();
+    } else if(tipo_conexao=='S3') {
         $("#exibe_url_s3").show();
         $("#exibe_campo_consulta").hide();
         $("#exibe_conexao_banco").hide();
+        $("#exibe_fonte_existente").hide();
+    } else {
+        $("#exibe_url_s3").hide();
+        $("#exibe_campo_consulta").show();
+        $("#exibe_conexao_banco").hide();
+
+        opcoes_fonte_existentes = '<div class="mb-3">'+
+                  '<label class="form-label">Fonte</label>'+
+                  '<select id="fonte_existente" class="form-select">';
+        
+        for(i=0;i<dados.length;i++){
+            opcoes_fonte_existentes=opcoes_fonte_existentes+'<option value="'+dados[i].nome_tabela+'" selected>'+dados[i].nome_tabela+'</option>'
+        }
+
+        opcoes_fonte_existentes=opcoes_fonte_existentes+'</select>'+
+                '</div>';
+
+        $("#exibe_fonte_existente").html(opcoes_fonte_existentes);
+        $("#exibe_fonte_existente").show();
     }
 }
 
@@ -193,9 +214,12 @@ $("#salvar_informações").click(async function(){
     if($("#report-type").val()=='SQL'){
         verifica_consulta_s3=$("#consulta_sql").val();
         verifica_banco_s3=$("#conexao_banco").val();
-    } else {
+    } else if($("#report-type").val()=='S3') {
         verifica_consulta_s3=$("#url_s3").val();
         verifica_banco_s3='algar-data-science-team-dev';
+    } else {
+        verifica_consulta_s3=$("#consulta_sql").val();
+        verifica_banco_s3=$("#fonte_existente").val();
     }
 
     for(i=0 ; i<dados.length; i++){
