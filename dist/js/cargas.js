@@ -158,6 +158,28 @@ async function carrega_info_cargas(id_linha){
 
 }
 
+async function exibe_campos_joins(qtd_joins){
+        var opcoes_campos_existentes = Array(0);
+        $("#exibe_campos_joins").html('');
+
+        if(qtd_joins!=0 || qtd_joins!='0'){
+            for(j=0 ; j<qtd_joins; j++){
+                opcoes_campos_existentes[j] = '<div class="mb-3">'+
+                  '<label class="form-label">Left '+(j+1)+'</label>'+
+                  '<select id="campo_join_'+(j+1)+'" class="form-select">';
+        
+                for(i=0;i<dados.length;i++){
+                    opcoes_campos_existentes[j]=opcoes_campos_existentes[j]+'<option value="'+dados[i].nome_tabela+'" selected>'+dados[i].nome_tabela+'</option>'
+                }
+
+                opcoes_campos_existentes[j]=opcoes_campos_existentes[j]+'</select>'+
+                        '</div>';
+                $("#exibe_campos_joins").append(opcoes_campos_existentes[j]);
+            }
+        }
+
+}
+
 async function seleciona_tipo_conexao(tipo_conexao){
     $("#report-type").val(tipo_conexao);
     if(tipo_conexao=='SQL'){
@@ -165,11 +187,15 @@ async function seleciona_tipo_conexao(tipo_conexao){
         $("#exibe_campo_consulta").show();
         $("#exibe_conexao_banco").show();
         $("#exibe_fonte_existente").hide();
+        $("#exibe_joins_existentes").hide();
+        $("#exibe_campos_joins").hide();
     } else if(tipo_conexao=='S3') {
         $("#exibe_url_s3").show();
         $("#exibe_campo_consulta").hide();
         $("#exibe_conexao_banco").hide();
         $("#exibe_fonte_existente").hide();
+        $("#exibe_joins_existentes").hide();
+        $("#exibe_campos_joins").hide();
     } else {
         $("#exibe_url_s3").hide();
         $("#exibe_campo_consulta").show();
@@ -188,6 +214,8 @@ async function seleciona_tipo_conexao(tipo_conexao){
 
         $("#exibe_fonte_existente").html(opcoes_fonte_existentes);
         $("#exibe_fonte_existente").show();
+        $("#exibe_joins_existentes").show();
+        $("#exibe_campos_joins").show();
     }
 }
 
@@ -209,6 +237,9 @@ $("#salvar_informações").click(async function(){
 
     var verifica_consulta_s3='';
     var verifica_banco_s3='';
+    var verifica_campo_join_1='';
+    var verifica_campo_join_2='';
+    var verifica_campo_join_3='';
     var id_linha_criado=0;
 
     if($("#report-type").val()=='SQL'){
@@ -220,6 +251,21 @@ $("#salvar_informações").click(async function(){
     } else {
         verifica_consulta_s3=$("#consulta_sql").val();
         verifica_banco_s3=$("#fonte_existente").val();
+        for(i=0 ; i<$("#exibe_joins_existentes").find("input").length; i++){
+            if($("#exibe_joins_existentes").find("input")[i].checked){
+                verifica_joins=$("#exibe_joins_existentes").find("input")[i].value;
+            }
+        }
+        if($("#exibe_campos_joins").find("select").length==1){
+            verifica_campo_join_1=$("#campo_join_1").val();
+        } else if($("#exibe_campos_joins").find("select").length==2){
+            verifica_campo_join_1=$("#campo_join_1").val();
+            verifica_campo_join_2=$("#campo_join_2").val();
+        } else if($("#exibe_campos_joins").find("select").length==3){
+            verifica_campo_join_1=$("#campo_join_1").val();
+            verifica_campo_join_2=$("#campo_join_2").val();
+            verifica_campo_join_3=$("#campo_join_3").val();
+        }
     }
 
     for(i=0 ; i<dados.length; i++){
@@ -236,6 +282,10 @@ $("#salvar_informações").click(async function(){
         consulta_url : verifica_consulta_s3,
         tipo_fonte : $("#report-type").val(),
         bucket_banco : verifica_banco_s3,
+        qtd_joins: verifica_joins,
+        tabela_join_1: verifica_campo_join_1,
+        tabela_join_2: verifica_campo_join_2,
+        tabela_join_3: verifica_campo_join_3,
         descricao_negocio : $("#descricao_info").val(),
         status : "1",
         usuario : email,
