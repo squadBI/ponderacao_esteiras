@@ -9,6 +9,11 @@
 
             await $("#usuario").text(usuario.split(' ')[0]+' '+usuario.split(' ')[usuario.split(' ').length-1]);
             await $("#posicao").text(posicao);
+
+            if(tipo=='Administrador'){
+                $("#verifica_analista_usuario").show();
+            }
+
         } else {
                 window.location.assign('./verificacao-usuario');
         }

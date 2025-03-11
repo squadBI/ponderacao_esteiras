@@ -67,7 +67,7 @@ function verifica_hash(input_hash){
         localStorage.setItem('tipo', tipo);
         localStorage.setItem('posicao', posicao);
         localStorage.setItem('acessos_segmento', acessos_segmento);
-        window.location.assign('./index');
+        window.location.assign('./');
     } else {
         $("#exibe_input_email").show();
         $("#exibe_codigo_verificacao").hide();
