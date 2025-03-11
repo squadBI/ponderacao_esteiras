@@ -26,6 +26,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.3/theme/dracula.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.3/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.3/mode/sql/sql.min.js"></script>
+    <script src="https://bundle.run/buffer@6.0.3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script>
     <style>
       @import url('https://rsms.me/inter/inter.css');
       :root {
@@ -115,22 +117,8 @@
                   Cargas > Tratamentos > Joins > Calculados > Filtros
                 </div>
                 <h2 class="page-title">
-                  Adicionar tabelas junto das cargas iniciais
+                  Informações das tabelas e cargas iniciais
                 </h2>
-              </div>
-              <!-- Page title actions -->
-              <div class="col-auto ms-auto d-print-none">
-                <div class="btn-list">
-                  <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modal-report">
-                    <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-                    Adicionar carga
-                  </a>
-                  <a href="#" class="btn btn-primary d-sm-none btn-icon" data-bs-toggle="modal" data-bs-target="#modal-report" aria-label="Create new report">
-                    <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-                  </a>
-                </div>
               </div>
             </div>
           </div>
@@ -138,7 +126,113 @@
         <!-- Page body -->
         <div class="page-body">
           <div class="container-xl">
-            
+            <div class="row row-deck row-cards mb-3">
+              <div class="col-12">
+                <div class="row row-cards">
+                  <div class="col-sm-6 col-lg-3">
+                    <div class="card card-sm">
+                      <div class="card-body">
+                        <div class="row align-items-center">
+                          <div class="col-auto">
+                            <span class="bg-primary text-white avatar"><!-- Download SVG icon from http://tabler-icons.io/i/currency-dollar -->
+                              <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-database"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 6m-8 0a8 3 0 1 0 16 0a8 3 0 1 0 -16 0" /><path d="M4 6v6a8 3 0 0 0 16 0v-6" /><path d="M4 12v6a8 3 0 0 0 16 0v-6" /></svg>
+                            </span>
+                          </div>
+                          <div class="col">
+                            <div class="font-weight-medium">
+                              <span id="num_tabelas"></span> Cargas
+                            </div>
+                            <div class="text-muted">
+                              Total de tabelas
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <div class="card card-sm">
+                      <div class="card-body">
+                        <div class="row align-items-center">
+                          <div class="col-auto">
+                            <span class="bg-green text-white avatar"><!-- Download SVG icon from http://tabler-icons.io/i/shopping-cart -->
+                              <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-file-type-sql"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M5 20.25c0 .414 .336 .75 .75 .75h1.25a1 1 0 0 0 1 -1v-1a1 1 0 0 0 -1 -1h-1a1 1 0 0 1 -1 -1v-1a1 1 0 0 1 1 -1h1.25a.75 .75 0 0 1 .75 .75" /><path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" /><path d="M18 15v6h2" /><path d="M13 15a2 2 0 0 1 2 2v2a2 2 0 1 1 -4 0v-2a2 2 0 0 1 2 -2z" /><path d="M14 20l1.5 1.5" /></svg>
+                            </span>
+                          </div>
+                          <div class="col">
+                            <div class="font-weight-medium">
+                              <span id="num_consultas"></span> SQL
+                            </div>
+                            <div class="text-muted">
+                              Consultas em banco
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <div class="card card-sm">
+                      <div class="card-body">
+                        <div class="row align-items-center">
+                          <div class="col-auto">
+                            <span class="bg-twitter text-white avatar"><!-- Download SVG icon from http://tabler-icons.io/i/brand-twitter -->
+                              <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-file-type-xls"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" /><path d="M4 15l4 6" /><path d="M4 21l4 -6" /><path d="M17 20.25c0 .414 .336 .75 .75 .75h1.25a1 1 0 0 0 1 -1v-1a1 1 0 0 0 -1 -1h-1a1 1 0 0 1 -1 -1v-1a1 1 0 0 1 1 -1h1.25a.75 .75 0 0 1 .75 .75" /><path d="M11 15v6h3" /></svg>
+                            </span>
+                          </div>
+                          <div class="col">
+                            <div class="font-weight-medium">
+                              <span id="num_tabelas_s3"></span> Tabelas
+                            </div>
+                            <div class="text-muted">
+                              Arquivos no S3
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <div class="card card-sm">
+                      <div class="card-body">
+                        <div class="row align-items-center">
+                          <div class="col-auto">
+                            <span class="bg-facebook text-white avatar"><!-- Download SVG icon from http://tabler-icons.io/i/brand-facebook -->
+                              <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-google-big-query"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17.73 19.875a2.225 2.225 0 0 1 -1.948 1.125h-7.283a2.222 2.222 0 0 1 -1.947 -1.158l-4.272 -6.75a2.269 2.269 0 0 1 0 -2.184l4.272 -6.75a2.225 2.225 0 0 1 1.946 -1.158h7.285c.809 0 1.554 .443 1.947 1.158l3.98 6.75a2.33 2.33 0 0 1 0 2.25l-3.98 6.75v-.033z" /><path d="M11.5 11.5m-3.5 0a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0 -7 0" /><path d="M14 14l2 2" /></svg>
+                            </span>
+                          </div>
+                          <div class="col">
+                            <div class="font-weight-medium">
+                              <span id="num_tabelas_query"></span> Consultas
+                            </div>
+                            <div class="text-muted">
+                              Tabelas já existentes
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row row-cards">
+              <div class="col-lg-4">
+                <div class="card">
+                  <div class="card-header">
+                      <h3 class="card-title">Log de execução: 11/03/2025</h3>
+                      <div class="card-actions btn-actions">
+                        <a onclick="inicia_varredura_execucao()" class="btn-action" style="cursor: pointer;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-player-play"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 4v16l13 -8z"></path></svg></a>
+                      </div>
+                    </div>
+                  <div class="card-body">
+                    <ul id="logs_execucao" class="steps steps-vertical">
+                      
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <footer class="footer footer-transparent d-print-none">
@@ -183,6 +277,7 @@
     <!-- Tabler Core -->
     <script src="./dist/js/tabler.min.js?1684106062" defer></script>
     <script src="./dist/js/demo.min.js?1684106062" defer></script>
-    <script src="./dist/js/verifica-login.js"></script>  
+    <script src="./dist/js/verifica-login.js"></script> 
+    <script src="./dist/js/cargas.js"></script>  
   </body>
 </html>
