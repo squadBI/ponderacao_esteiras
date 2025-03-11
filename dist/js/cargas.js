@@ -313,12 +313,18 @@ $("#salvar_informações").click(async function(){
 
     id_linha_criado++;
 
+    // Compressão da consulta usando pako
+    var compressedQuery = pako.deflate(verifica_consulta_s3);
+
+    // Codificação em base64
+    var encodedQuery = buffer.Buffer.from(compressedQuery).toString('base64');
+
     var insert_data = {
         solicitacao: "insercao_linha_tabela",
         tabela: "ponderacao_cargas",
         id_linha: ""+id_linha_criado+"",
         nome_tabela : $("#nome_tabela").val(),
-        consulta_url : verifica_consulta_s3,
+        consulta_url : encodedQuery,
         tipo_fonte : $("#report-type").val(),
         bucket_banco : verifica_banco_s3,
         qtd_joins: verifica_joins,
