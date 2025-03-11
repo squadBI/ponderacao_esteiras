@@ -39,6 +39,7 @@ async function verifica_usuario(input_email){
                 if(dados[i].email==input_email){
                     check_email=true;
                     email=input_email;
+                    raiz_email=dados[i].raiz_email;
                     usuario=dados[i].usuario;
                     tipo=dados[i].tipo;
                     posicao=dados[i].posicao;
@@ -64,6 +65,7 @@ function verifica_hash(input_hash){
     if(input_hash==hash_gerada_randomicamente){
         localStorage.setItem('usuario', usuario);
         localStorage.setItem('email', email);
+        localStorage.setItem('raiz_email', raiz_email);
         localStorage.setItem('tipo', tipo);
         localStorage.setItem('posicao', posicao);
         localStorage.setItem('acessos_segmento', acessos_segmento);
