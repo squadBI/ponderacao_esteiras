@@ -2,6 +2,28 @@ function sleep(ms) {
           return new Promise(resolve => setTimeout(resolve, ms));
       }
 
+function tranforma_data_iso(dataHora) {
+            // Data no formato ISO 8601
+            const isoDate = dataHora;
+
+            // Criar um objeto Date a partir da string ISO
+            const date = new Date(isoDate);
+
+            // Extrair os componentes da data
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Os meses são indexados a partir de 0
+            const year = date.getFullYear();
+
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+
+            // Formatar a data no formato desejado
+            const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+
+            return formattedDate;
+      }
+
 (async function () {
     dados = Array(0);
 
@@ -43,7 +65,9 @@ async function carrega_cargas(input_email){
             var num_tabelas=dados.length;
             var num_consultas=0;
             var num_tabelas_s3=0;
+            var num_tabelas_query=0;
             var icone_carga = '';
+            $("#logs_execucao").html('');
             for(i=0; i<dados.length; i++){
                 if(dados[i].tipo_fonte=='SQL'){
                     num_consultas++;
@@ -53,12 +77,22 @@ async function carrega_cargas(input_email){
                     num_tabelas_s3++;
                     icone_carga = '<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-file-type-xls"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" /><path d="M4 15l4 6" /><path d="M4 21l4 -6" /><path d="M17 20.25c0 .414 .336 .75 .75 .75h1.25a1 1 0 0 0 1 -1v-1a1 1 0 0 0 -1 -1h-1a1 1 0 0 1 -1 -1v-1a1 1 0 0 1 1 -1h1.25a.75 .75 0 0 1 .75 .75" /><path d="M11 15v6h3" /></svg>';
                 }
+                if(dados[i].tipo_fonte=='CONSULTA'){
+                    num_tabelas_query++;
+                    icone_carga = '<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-google-big-query"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17.73 19.875a2.225 2.225 0 0 1 -1.948 1.125h-7.283a2.222 2.222 0 0 1 -1.947 -1.158l-4.272 -6.75a2.269 2.269 0 0 1 0 -2.184l4.272 -6.75a2.225 2.225 0 0 1 1.946 -1.158h7.285c.809 0 1.554 .443 1.947 1.158l3.98 6.75a2.33 2.33 0 0 1 0 2.25l-3.98 6.75v-.033z" /><path d="M11.5 11.5m-3.5 0a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0 -7 0" /><path d="M14 14l2 2" /></svg>';
+                }
 
                 var active = '';
                 if(i==0){
                     active = 'active';
                     var id_linha_calculo=dados[i].id;
                 }
+
+                var data_formatada = tranforma_data_iso(dados[i].data_execucao);
+                $("#logs_execucao").append('<li class="step-item">'+
+                        '<div class="h4 m-0">'+dados[i].nome_tabela+'</div>'+
+                        '<div class="text-muted">'+data_formatada+'</div>'+
+                      '</li>');
 
                 $("#dados_cargas").append('<div onclick="carrega_info_cargas('+dados[i].id+')" class="list-group list-group-flush cursor-seleciona-carga">'+
                                             '<div id="info_carga_active'+dados[i].id+'" class="list-group-item '+active+'">'+
@@ -83,6 +117,7 @@ async function carrega_cargas(input_email){
             $("#num_tabelas").text(num_tabelas);
             $("#num_consultas").text(num_consultas);
             $("#num_tabelas_s3").text(num_tabelas_s3);
+            $("#num_tabelas_query").text(num_tabelas_query);
             carrega_info_cargas(id_linha_calculo);
 
         })
@@ -99,7 +134,11 @@ async function carrega_info_cargas(id_linha){
 
     for(i=0; i<dados.length; i++){
         if(dados[i].id==id_linha){
-            var calculo = dados[i].consulta_url;
+            // Decodificação de base64
+            var decodedQuery = buffer.Buffer.from(dados[i].consulta_url, 'base64');
+
+            // Descompressão da consulta
+            var calculo = pako.inflate(decodedQuery, { to: 'string' });
             $("#info_cargas").html('');
             $("#info_cargas").append('<div class="datagrid mb-3">'+
                   '<div class="datagrid-item">'+
