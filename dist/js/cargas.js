@@ -136,7 +136,6 @@ async function carrega_info_cargas(id_linha){
         if(dados[i].id==id_linha){
             // Decodificação de base64
             var decodedQuery = buffer.Buffer.from(dados[i].consulta_url, 'base64');
-
             // Descompressão da consulta
             var calculo = pako.inflate(decodedQuery, { to: 'string' });
             $("#info_cargas").html('');
@@ -219,6 +218,28 @@ async function exibe_campos_joins(qtd_joins){
 
 }
 
+async function exibe_campos_joins_update(qtd_joins){
+        var opcoes_campos_existentes_update = Array(0);
+        $("#exibe_campos_joins_update").html('');
+
+        if(qtd_joins!=0 || qtd_joins!='0'){
+            for(j=0 ; j<qtd_joins; j++){
+                opcoes_campos_existentes_update[j] = '<div class="mb-3">'+
+                  '<label class="form-label">Left '+(j+1)+'</label>'+
+                  '<select id="campo_join_'+(j+1)+'_update" class="form-select">';
+        
+                for(i=0;i<dados.length;i++){
+                    opcoes_campos_existentes_update[j]=opcoes_campos_existentes_update[j]+'<option value="'+dados[i].nome_tabela+'" selected>'+dados[i].nome_tabela+'</option>'
+                }
+
+                opcoes_campos_existentes_update[j]=opcoes_campos_existentes_update[j]+'</select>'+
+                        '</div>';
+                $("#exibe_campos_joins_update").append(opcoes_campos_existentes_update[j]);
+            }
+        }
+
+}
+
 async function seleciona_tipo_conexao(tipo_conexao){
     $("#report-type").val(tipo_conexao);
     if(tipo_conexao=='SQL'){
@@ -259,14 +280,41 @@ async function seleciona_tipo_conexao(tipo_conexao){
 }
 
 async function seleciona_tipo_conexao_update(tipo_conexao){
+    $("#report-type-update").val(tipo_conexao);
     if(tipo_conexao=='SQL'){
         $("#exibe_url_s3_update").hide();
         $("#exibe_campo_consulta_update").show();
         $("#exibe_conexao_banco_update").show();
-    } else {
+        $("#exibe_fonte_existente_update").hide();
+        $("#exibe_joins_existentes_update").hide();
+        $("#exibe_campos_joins_update").hide();
+    } else if(tipo_conexao=='S3') {
         $("#exibe_url_s3_update").show();
         $("#exibe_campo_consulta_update").hide();
         $("#exibe_conexao_banco_update").hide();
+        $("#exibe_fonte_existente_update").hide();
+        $("#exibe_joins_existentes_update").hide();
+        $("#exibe_campos_joins_update").hide();
+    } else {
+        $("#exibe_url_s3_update").hide();
+        $("#exibe_campo_consulta_update").show();
+        $("#exibe_conexao_banco_update").hide();
+
+        opcoes_fonte_existentes = '<div class="mb-3">'+
+                  '<label class="form-label">Fonte</label>'+
+                  '<select id="fonte_existente_update" class="form-select">';
+        
+        for(i=0;i<dados.length;i++){
+            opcoes_fonte_existentes=opcoes_fonte_existentes+'<option value="'+dados[i].nome_tabela+'" selected>'+dados[i].nome_tabela+'</option>'
+        }
+
+        opcoes_fonte_existentes=opcoes_fonte_existentes+'</select>'+
+                '</div>';
+
+        $("#exibe_fonte_existente_update").html(opcoes_fonte_existentes);
+        $("#exibe_fonte_existente_update").show();
+        $("#exibe_joins_existentes_update").show();
+        $("#exibe_campos_joins_update").show();
     }
 }
 
@@ -276,6 +324,7 @@ $("#salvar_informações").click(async function(){
 
     var verifica_consulta_s3='';
     var verifica_banco_s3='';
+    var verifica_joins='';
     var verifica_campo_join_1='';
     var verifica_campo_join_2='';
     var verifica_campo_join_3='';
@@ -391,6 +440,42 @@ async function exclui_carga(id_linha){
 
 }
 
+
+async function atualiza_consulta(id_linha,descricao_negocio,consulta_url){
+
+    var url = 'https://prod-125.westus.logic.azure.com:443/workflows/ec113c1849d34343b643b86b9725dddc/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wfR6aFT1EvuRvXnPmsrt_PKVd3hmpaA3iP1VYeLHz5k';
+
+    var insert_data = {
+        solicitacao: "atualiza_consulta_tabela",
+        tabela: "ponderacao_cargas",
+        key: ""+id_linha+"",
+        descricao: ""+descricao_negocio+"",
+        consulta: ""+consulta_url+"",
+        email : email,
+        x_api_key: "1348f1ed93616d59f6d62eb7631ae137cc902fc9cc4bb22428a384c1cec91c20"
+    };
+    
+    await fetch(url,{
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(insert_data)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('atualização realizada com sucesso');
+        })
+        .catch(error => {
+            console.log('problema na conexão com a api');
+        })
+
+    await sleep(2000);
+    await $("#dados_cargas").html('');
+    await carrega_cargas(email);
+
+}
+
 async function confirma_excluir_carga(id_linha){
     $("#confirma_exclusao").attr('onClick','exclui_carga('+id_linha+')');    
 }
@@ -399,28 +484,29 @@ async function confirma_excluir_carga(id_linha){
 async function carrega_informacoes_update(id_linha){
     for(i=0; i<dados.length; i++){
         if(dados[i].id==id_linha){
-            for(j=0 ; j<$("input#report-type-update").length; j++){
-                $("input#report-type-update")[j].checked=false;
-                if($("input#report-type-update")[j].value==dados[i].tipo_fonte){
-                    $("input#report-type-update")[j].checked=true;
-                }
-            }
-            $("#nome_tabela_update").val(dados[i].nome_tabela);
+            // Decodificação de base64
+            var decodedQuery = buffer.Buffer.from(dados[i].consulta_url, 'base64');
+            // Descompressão da consulta
+            var calculo = pako.inflate(decodedQuery, { to: 'string' });
+            $("#consulta_sql_update").val(calculo);
             $("#descricao_info_update").val(dados[i].descricao_negocio);
-            if(dados[i].tipo_fonte=='SQL'){
-                $("#conexao_banco_update").val(dados[i].bucket_banco);
-                $("#consulta_sql_update").val(dados[i].consulta_url);
-                $("#url_s3_update").val('')
-                $("#exibe_url_s3_update").hide();
-                $("#exibe_campo_consulta_update").show();
-                $("#exibe_conexao_banco_update").show();
-            } else {
-                $("#exibe_url_s3_update").show();
-                $("#exibe_campo_consulta_update").hide();
-                $("#exibe_conexao_banco_update").hide();
-                $("#url_s3_update").val(dados[i].consulta_url);
-                $("#consulta_sql_update").val('');
-            }
+            $("#linha_key_upadate").val(id_linha);        
         }
     }
 }
+
+$("#atualizar_informacoes").click(async function(){
+
+    // Compressão da consulta usando pako
+    var compressedQuery = pako.deflate($("#consulta_sql_update").val());
+
+    // Codificação em base64
+    var encodedQuery = buffer.Buffer.from(compressedQuery).toString('base64');
+
+    await atualiza_consulta($("#linha_key_upadate").val(),$("#descricao_info_update").val(),encodedQuery);
+
+    await sleep(2000);
+    await $("#dados_cargas").html('');
+    await carrega_cargas(email);
+
+});
