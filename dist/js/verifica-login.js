@@ -15,6 +15,7 @@
 
             if(tipo=='Administrador'){
                 $("#verifica_analista_usuario").show();
+                $("#verifica_analista_usuario_hml").show();
             }
 
         } else {
