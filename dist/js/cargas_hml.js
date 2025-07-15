@@ -443,7 +443,7 @@ async function exclui_carga(id_linha){
 
 async function atualiza_consulta(id_linha,descricao_negocio,consulta_url){
 
-    var url = 'https://prod-125.westus.logic.azure.com:443/workflows/ec113c1849d34343b643b86b9725dddc/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wfR6aFT1EvuRvXnPmsrt_PKVd3hmpaA3iP1VYeLHz5k';
+    var url = 'https://prod-132.westus.logic.azure.com:443/workflows/7517bdd3dee649488653e1ccb7ac903d/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=FNVi1fv-jcEZqGBWVRKHzQky2HGlI4AWg8kHgiQLYEw';
 
     var insert_data = {
         solicitacao: "atualiza_consulta_tabela",
